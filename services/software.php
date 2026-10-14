@@ -1,3 +1,22 @@
+<?php
+require_once "../config/db.php";
+$service_id = 1;
+$details_query = "
+    SELECT *
+    FROM service_details
+    WHERE service_id = ?
+    AND status = 1
+    ORDER BY display_order ASC, detail_id ASC
+";
+
+$stmt = $conn->prepare($details_query);
+$stmt->bind_param("i", $service_id);
+$stmt->execute();
+
+$details_result = $stmt->get_result();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -37,7 +56,7 @@
             </li>
 
             <li>
-                <a href="../portfolio.php">Portfolio</a>
+                <a href="../index.php#portfolio">Portfolio</a>
             </li>
 
             <li>
@@ -69,129 +88,35 @@
         </p>
     </div>
 
+    <?php if ($details_result && $details_result->num_rows > 0): ?>
 
-
-        <div class="detail-card">
-            <span>01</span>
-
-            <h3>
-                Application Development
-            </h3>
-            </div>
+    <?php while ($detail = $details_result->fetch_assoc()): ?>
 
         <div class="detail-card">
-            <span>02</span>
+
+            <span>
+                <?php echo str_pad($detail['display_order'], 2, '0', STR_PAD_LEFT); ?>
+            </span>
 
             <h3>
-                Business to Business
+                <?php echo htmlspecialchars($detail['detail_name']); ?>
             </h3>
-            </div>
 
-        <div class="detail-card">
-            <span>03</span>
+            <?php if (!empty($detail['description'])): ?>
+                <p>
+                    <?php echo htmlspecialchars($detail['description']); ?>
+                </p>
+            <?php endif; ?>
 
-            <h3>
-                Cloud Serices
-            </h3>
-            </div>
+        </div>
 
-        <div class="detail-card">
-            <span>04</span>
+    <?php endwhile; ?>
 
-            <h3>
-                Enterprise software development
-            </h3>
-            </div>
+<?php else: ?>
 
+    <p>No software services available at the moment.</p>
 
-        <div class="detail-card">
-            <span>05</span>
-
-            <h3>
-                It consulting
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>06</span>
-
-            <h3>
-                Mobile app development
-            </h3>
-            </div>
-
-        
-        <div class="detail-card">
-            <span>07</span>
-
-            <h3>
-                Software consulting
-            </h3>
-            </div>
+<?php endif; ?>
 
 
-        <div class="detail-card">
-            <span>08</span>
 
-            <h3>
-                Software development
-            </h3>
-            </div>
-
-
-        <div class="detail-card">
-            <span>09</span>
-
-            <h3>
-                Software development outsourcing
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>10</span>
-
-            <h3>
-                Solution consulting
-            </h3>
-            </div>
-
-
-        <div class="detail-card">
-            <span>11</span>
-
-            <h3>
-                Mobile Application Development
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>12</span>
-
-            <h3>
-                Android Development
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>13</span>
-
-            <h3>
-                iOS Development
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>14</span>
-
-            <h3>
-                Hybrid Mobile Application Development
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>15</span>
-
-            <h3>
-                Website Development
-            </h3>
-            </div>

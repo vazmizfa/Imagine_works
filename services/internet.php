@@ -1,3 +1,22 @@
+<?php
+require_once "../config/db.php";
+$service_id = 3;
+$details_query = "
+    SELECT *
+    FROM service_details
+    WHERE service_id = ?
+    AND status = 1
+    ORDER BY display_order ASC, detail_id ASC
+";
+
+$stmt = $conn->prepare($details_query);
+$stmt->bind_param("i", $service_id);
+$stmt->execute();
+
+$details_result = $stmt->get_result();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,7 +58,7 @@
             </li>
 
             <li>
-                <a href="../portfolio.php">Portfolio</a>
+                <a href="../index.php#portfolio">Portfolio</a>
             </li>
 
             <li>
@@ -54,7 +73,6 @@
         </a>
     </nav>
 </header>
-
 
 <!--SOFTWARE SERVICES-->
 <section class="service-details">
@@ -77,88 +95,32 @@
 
 
 
-        <div class="detail-card">
-            <span>01</span>
-            <h3>
-                Branding
-            </h3>
-            </div>
+        <?php if ($details_result && $details_result->num_rows > 0): ?>
+
+    <?php while ($detail = $details_result->fetch_assoc()): ?>
 
         <div class="detail-card">
-            <span>02</span>
-            <h3>
-                Content Management
-            </h3>
-            </div>
 
-        <div class="detail-card">
-            <span>03</span>
-            <h3>
-                digital marketing
-            </h3>
-            </div>
+            <span>
+                <?php echo str_pad($detail['display_order'], 2, '0', STR_PAD_LEFT); ?>
+            </span>
 
-        <div class="detail-card">
-            <span>04</span>
             <h3>
-                E-commerce
+                <?php echo htmlspecialchars($detail['detail_name']); ?>
             </h3>
-            </div>
 
+            <?php if (!empty($detail['description'])): ?>
+                <p>
+                    <?php echo htmlspecialchars($detail['description']); ?>
+                </p>
+            <?php endif; ?>
 
-        <div class="detail-card">
-            <span>05</span>
-            <h3>
-                Email marketing
-            </h3>
-            </div>
+        </div>
 
-        <div class="detail-card">
-            <span>06</span>
-            <h3>
-                Marketing strategy consultation
-            </h3>
-            </div>
+    <?php endwhile; ?>
 
-        
-        <div class="detail-card">
-            <span>07</span>
-            <h3>
-                Online lead generation
-            </h3>
-            </div>
+<?php else: ?>
 
-        <div class="detail-card">
-            <span>08</span>
-            <h3>
-                Paid Advertising
-            </h3>
-            </div>
-  
-        <div class="detail-card">
-            <span>09</span>
-            <h3>
-                Pay-per-click consulting
-            </h3>
-            </div>
+    <p>No internet marketing services available at the moment.</p>
 
-        <div class="detail-card">
-            <span>10</span>
-            <h3>
-                Search engine optimization
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>11</span>
-            <h3>
-                Social media marketing
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>12</span>
-            <h3>
-                Web marketing
-            </h3>
-            </div>
+<?php endif; ?>

@@ -1,3 +1,22 @@
+<?php
+require_once "../config/db.php";
+$service_id = 2;
+$details_query = "
+    SELECT *
+    FROM service_details
+    WHERE service_id = ?
+    AND status = 1
+    ORDER BY display_order ASC, detail_id ASC
+";
+
+$stmt = $conn->prepare($details_query);
+$stmt->bind_param("i", $service_id);
+$stmt->execute();
+
+$details_result = $stmt->get_result();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,7 +32,6 @@
     <link rel="stylesheet" href="../css/style.css">
 
 </head>
-
 <body>
 
 
@@ -39,7 +57,7 @@
             </li>
 
             <li>
-                <a href="../portfolio.php">Portfolio</a>
+                <a href="../index.php#portfolio">Portfolio</a>
             </li>
 
             <li>
@@ -74,79 +92,37 @@
 
     </div>
 
+    <?php if ($details_result && $details_result->num_rows > 0): ?>
 
-
-        <div class="detail-card">
-            <span>01</span>
-            <h3>
-                Cloud hosting
-            </h3>
-            </div>
+    <?php while ($detail = $details_result->fetch_assoc()): ?>
 
         <div class="detail-card">
-            <span>02</span>
-            <h3>
-                Corporate hosting
-            </h3>
-            </div>
 
-        <div class="detail-card">
-            <span>03</span>
-            <h3>
-                Domain hosting
-            </h3>
-            </div>
+            <span>
+                <?php echo str_pad($detail['display_order'], 2, '0', STR_PAD_LEFT); ?>
+            </span>
 
-        <div class="detail-card">
-            <span>04</span>
             <h3>
-                Email hosting
+                <?php echo htmlspecialchars($detail['detail_name']); ?>
             </h3>
-            </div>
+
+            <?php if (!empty($detail['description'])): ?>
+                <p>
+                    <?php echo htmlspecialchars($detail['description']); ?>
+                </p>
+            <?php endif; ?>
+
+        </div>
+
+    <?php endwhile; ?>
+
+<?php else: ?>
+
+    <p>No hosting services available at the moment.</p>
+
+<?php endif; ?>
 
 
-        <div class="detail-card">
-            <span>05</span>
-            <h3>
-                Video hosting
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>06</span>
-            <h3>
-                Web hosting
-            </h3>
-            </div>
-
-        
-        <div class="detail-card">
-            <span>07</span>
-            <h3>
-                Web design
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>08</span>
-            <h3>
-                Web hosting
-            </h3>
-            </div>
-  
-        <div class="detail-card">
-            <span>09</span>
-            <h3>
-                website hosting
-            </h3>
-            </div>
-
-        <div class="detail-card">
-            <span>10</span>
-            <h3>
-                Website security
-            </h3>
-            </div>
 
 
 
